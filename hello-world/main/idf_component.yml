@@ -1,11 +1,10 @@
 ## IDF Component Manager Manifest File
 dependencies:
-  zorxx/neopixel: '*'
   espressif/max17048: =*
   espressif/i2c_bus: =*
   ## Required IDF version
   idf:
-    version: '>=4.1.0'
+    version: '>=5.5.1'
   # # Put list of dependencies here
   # # For components maintained by Espressif:
   # component: "~1.0.0"
@@ -17,4 +16,4 @@ dependencies:
   #   # `public` flag doesn't have an effect dependencies of the `main` component.
   #   # All dependencies of `main` are public by default.
   #   public: true
-  # espressif/arduino-esp32: ^3.3.3
+  espressif/arduino-esp32: ^3.3.3
