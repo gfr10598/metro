@@ -1,3 +1,25 @@
+# Overview
+1. Add IMU low power gravity vector, gyro bias processing
+2. Power IMU when system is in deep sleep
+3. Wake up, read IMU gravity vector, compare to old value, go back to sleep.
+4. Establish what a sensing cycle costs - wake up, read i2c, go to sleep.  Expect
+it might be on the order of 50 uC.  (30 uA * 1.5 msec).  We might actually be
+able to wake up every second.
+
+## Active mode - bell swinging
+1. Change IMU to high performance mode
+2. Open a new file using date and time from RTC
+3. Write gyro bias, temperature, and starting gravity vector
+4. Write 4k blocks of timestamped, compressed data.
+5. Continue until we observe idle time.
+
+## Attentive mode - uploading or providing web interface
+1. Upload data to server, or abort upload if ringing resumes.
+1. Provide http/ftp server, in light sleep mode, for 30 minutes.
+1. Go back to deep sleep cycle.
+
+
+
 ### Important - notes on light sleep and flash leakage
 https://esp32.com/viewtopic.php?t=41048
 
