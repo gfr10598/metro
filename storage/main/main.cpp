@@ -37,6 +37,7 @@ https://esp32.com/viewtopic.php?t=32177 - adc power savings
 #include <SD.h>
 
 #include "LSM6DSV16XSensor.h"
+#include "LSMextension.h"
 
 #define I2C_MASTER_SCL_IO 48          /*!< gpio number for I2C master clock */
 #define I2C_MASTER_SDA_IO 47          /*!< gpio number for I2C master data  */
@@ -108,8 +109,8 @@ LSM6DSV16XSensor init_lsm()
     Wire.begin(I2C_MASTER_SDA_IO, I2C_MASTER_SCL_IO);
     Wire.setClock(400000);
     printf("I2C initialized\n");
-    LSM6DSV16XSensor LSM(&Wire);
-    printf("LSM created\n");
+    LSMExtension LSM(&Wire);
+    printf("LSM (extension) created\n");
     for (int i = 0; i < 10; i++)
     {
 
@@ -173,9 +174,13 @@ LSM6DSV16XSensor init_lsm()
     else
     {
         printf("LSM enabled\n");
+        delay(3); // Should allow about 12 samples.
         uint16_t samples = 0;
         LSM.FIFO_Get_Num_Samples(&samples);
-        printf("%d Samples available\n", samples);
+        uint8_t data[16 * 7];
+        uint16_t samples_read = 0;
+        LSM.Read_FIFO_Data(16, &data[0], &samples_read);
+        printf("%d Samples available  %d Samples read\n", samples, samples_read);
     }
 
     return LSM;
