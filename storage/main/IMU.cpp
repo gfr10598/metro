@@ -111,6 +111,11 @@ LSMExtension init_lsm(int sda, int scl)
     status |= LSM.Enable_G();
     status |= LSM.Enable_X();
 
+    status |= LSM.Enable_Gravity_Vector();
+    status |= LSM.Enable_Gyroscope_Bias();
+    status |= LSM.Set_SFLP_Batch(false, true, true);
+    status |= LSM.Set_SFLP_ODR(LSM6DSV16X_SFLP_15Hz);
+
     if (status != LSM6DSV16X_OK)
     {
         printf("LSM6DSV16X Sensor failed to configure FIFO\n");
@@ -123,10 +128,18 @@ LSMExtension init_lsm(int sda, int scl)
         delay(3); // Should allow about 12 samples.
         uint16_t samples = 0;
         LSM.FIFO_Get_Num_Samples(&samples);
-        uint8_t data[16 * 7];
+        uint8_t data[32 * 7];
         uint16_t samples_read = 0;
-        LSM.Read_FIFO_Data(16, &data[0], &samples_read);
+        LSM.Read_FIFO_Data(32, &data[0], &samples_read);
         printf("%d Samples available  %d Samples read\n", samples, samples_read);
+        for (uint16_t i = 0; i < samples_read; i++)
+        {
+            printf("Record %d: Cnt=0x%02X  Tag=0x%02X Data=%02X %02X %02X %02X %02X %02X\n", i,
+                   (data[i * 7 + 0] >> 1) && 0x03,
+                   data[i * 7 + 0] >> 3,
+                   data[i * 7 + 1], data[i * 7 + 2], data[i * 7 + 3],
+                   data[i * 7 + 4], data[i * 7 + 5], data[i * 7 + 6]);
+        }
     }
 
     return LSM;
